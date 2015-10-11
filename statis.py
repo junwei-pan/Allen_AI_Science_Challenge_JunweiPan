@@ -30,9 +30,9 @@ def statis_word2vec_coverage():
     And which ones can or can not be found ?  
     This can guide us to use more and more data.
     '''
-    path_model = 'model/word2vec_6.model'
+    path_model = 'model/word2vec_4.model'
     model = gensim.models.Word2Vec.load(path_model)
-    d_word_count = util.get_d_word_count_validation_choice()
+    d_word_count = util.get_d_word_count_train_choice()
     n_found = 0
     n_miss = 0
     for word in d_word_count.keys():
@@ -45,5 +45,5 @@ def statis_word2vec_coverage():
             print "%s\t%d\tMiss" % (word, d_word_count[word])
     print "Found\t%d\tMiss\t%d" % (n_found, n_miss)
 
-word_count()
-#statis_word2vec_coverage()
+#word_count()
+statis_word2vec_coverage()

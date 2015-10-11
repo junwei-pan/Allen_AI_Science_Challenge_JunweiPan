@@ -7,8 +7,9 @@ stemmer = PorterStemmer()
 def norm_word(word):
     # v1
     #word = word.lower().strip('?').strip('.').strip(',').strip('!').strip(':').strip(';').strip('\"').strip('\'').strip()
+    word = word.lower().strip('?').strip('.').strip(',').strip('!')
     # v2
-    word = ''.join(ch for ch in word.lower() if ch not in exclude)
+    #word = ''.join(ch for ch in word.lower() if ch not in exclude)
     return word
     '''
     # Not work based on experiment 10004 and 10008.
