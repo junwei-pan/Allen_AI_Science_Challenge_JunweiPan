@@ -5,7 +5,7 @@ import itertools
 import numpy as np
 import util
 import argparse
-
+from util import combination_index
 parser = argparse.ArgumentParser("Word2Vec")
 
 def get_vector_from_model(model, key):
@@ -14,19 +14,8 @@ def get_vector_from_model(model, key):
     except:
         res = np.zeros(model.vector_size)
     return res
-
-def combination_index(N, n_com):
-    res = []
-    s = ''
-    for i in range(N):
-        s += str(i)
-    for i in range(1, n_com + 1):
-        iter_com = itertools.combinations(s, i)
-        for com in iter_com:
-            com_tmp = [int(c) for c in com]
-            res.append(com_tmp)
-    return res
-
+'''
+'''
 
 def test_on_validation(path_model, n_combination_question = 3, n_combination_answer = 3, n_word_question = 5):
     model = gensim.models.Word2Vec.load(path_model)
@@ -37,7 +26,7 @@ def test_on_validation(path_model, n_combination_question = 3, n_combination_ans
     n_total = 0
     n_correct = 0
     #set_stopword = ('a', 'an', 'the', 'are', 'is', 'that', 'this', 'will', 'is', 'are', 'was', 'were', 'of', 'for')
-    d_word_count = load_d_word_count()
+    d_word_count = util.load_d_word_count()
     for index, line in enumerate(open(path_train)):
         n_total += 1
         if index == 0:
@@ -57,14 +46,14 @@ def test_on_validation(path_model, n_combination_question = 3, n_combination_ans
                     d[word] = 0
             sort = sorted(d.iteritems(), key = lambda dd : dd[1])
             question_u = [s[0] for s in sort[:n_word_question]]
-            lst_com_q = combination_index(len(question_u), n_combination_question)
+            lst_com_q = util.combination_index(len(question_u), n_combination_question)
             max = -1000000
             answer_p = ''
             for com_q in lst_com_q:
                 vec_q = np.sum([get_vector_from_model(model, question_u[i]) for i in com_q], axis = 0)
                 for i_choice in range(4):
                     choice_u =list(set(lst_choice[i_choice]))
-                    lst_com_choice = combination_index(len(choice_u), n_combination_answer)
+                    lst_com_choice = util.combination_index(len(choice_u), n_combination_answer)
                     for com_c in lst_com_choice:
                         vec_c = np.sum([get_vector_from_model(model, choice_u[i]) for i in com_c], axis = 0)
                         score = vec_q.dot(vec_c)
@@ -86,7 +75,7 @@ def test_on_train(path_model, n_combination_question = 3, n_combination_answer =
     n_total = 0
     n_correct = 0
     set_stopword = ('a', 'an', 'the', 'are', 'is', 'that', 'this', 'will', 'is', 'are', 'was', 'were', 'of', 'for')
-    d_word_count = load_d_word_count()
+    d_word_count = util.load_d_word_count()
     for index, line in enumerate(open(path_train)):
         n_total += 1
         if index == 0:
@@ -107,7 +96,7 @@ def test_on_train(path_model, n_combination_question = 3, n_combination_answer =
             # Only consider the word with lowest frequency.
             sort = sorted(d.iteritems(), key = lambda dd : dd[1])
             question_u = [s[0] for s in sort[:n_word_question]]
-            lst_com_q = combination_index(len(question_u), n_combination_question)
+            lst_com_q = util.combination_index(len(question_u), n_combination_question)
             max = -1000000
             answer_p = ''
             words_focus_question = []
@@ -116,7 +105,7 @@ def test_on_train(path_model, n_combination_question = 3, n_combination_answer =
                 vec_q = np.sum([get_vector_from_model(model, question_u[i]) for i in com_q], axis = 0)
                 for i_choice in range(4):
                     choice_u =list(set(lst_choice[i_choice]))
-                    lst_com_choice = combination_index(len(choice_u), n_combination_answer)
+                    lst_com_choice = util.combination_index(len(choice_u), n_combination_answer)
                     for com_c in lst_com_choice:
                         vec_c = np.sum([get_vector_from_model(model, choice_u[i]) for i in com_c], axis = 0)
                         score = vec_q.dot(vec_c)
@@ -140,12 +129,6 @@ def test_on_train(path_model, n_combination_question = 3, n_combination_answer =
             print str(n_correct) + ' / ' + str(n_total) + '\t' + str(n_correct * 1.0 / n_total)
     print n_correct * 1.0 / n_total
 
-def load_d_word_count(path = 'data/ck-12-word-count.txt'):
-    d = {}
-    for line in open(path):
-        lst = line.strip('\n').split('\t')
-        d[lst[0]] = int(lst[1])
-    return d
 
 def train_model(lst_sentence, path_model, min_count_p = 5, workers_p = 4, size_p = 200, window_p = 5):
     model = gensim.models.Word2Vec(lst_sentence, min_count = min_count_p, workers = window_p, size = size_p, window = window_p, cbow_mean = 0)

@@ -1,8 +1,28 @@
 from nltk.stem.porter import *
+import itertools
 import os
 import string
 exclude = set(string.punctuation)
 stemmer = PorterStemmer()
+
+def load_d_word_count(path = 'data/ck-12-word-count.txt'):
+    d = {}
+    for line in open(path):
+        lst = line.strip('\n').split('\t')
+        d[lst[0]] = int(lst[1])
+    return d
+
+def combination_index(N, n_com):
+    res = []
+    s = ''
+    for i in range(N):
+        s += str(i)
+    for i in range(1, n_com + 1):
+        iter_com = itertools.combinations(s, i)
+        for com in iter_com:
+            com_tmp = [int(c) for c in com]
+            res.append(com_tmp)
+    return res
 
 def norm_word(word):
     # v1
