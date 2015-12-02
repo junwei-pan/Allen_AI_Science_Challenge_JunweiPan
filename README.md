@@ -16,3 +16,7 @@ We use the lucene to index and search. The index is built using IndexFiles.java,
 
 For each answer, we calculate the word count of its words(excluding stop words) on the top N search results. Then the answer which get the highest word count is chosen as the prediction.
 
+### Performance
+
+We can get a score of 0.36, please refer to https://www.kaggle.com/c/the-allen-ai-science-challenge/leaderboard for the current leaderboard.
+
