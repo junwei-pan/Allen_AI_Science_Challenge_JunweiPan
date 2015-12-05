@@ -10,7 +10,7 @@ We use the wikipedia page of the ck-12 keywords to build index. The ck-12 keywor
 
 ### Indexing and Searching
 
-We use the lucene to index and search. The index is built using IndexFiles.java, and search is done by [Get_Top_Documents_Based_on_Lucene.java](https://github.com/kemaswill/Allen_AI_Science_Challenge_JunweiPan/blob/master/Get_Top_Documents_Based_on_Lucene.java), which is just a modification of the SearchFiles.java.
+We use the lucene to index and search. The index is built using IndexFiles.java(java org.apache.lucene.demo.IndexFiles  -docs data/wikipedia_content_based_on_ck_12_keyword_one_file_per_keyword/), and search is done by [Get_Top_Documents_Based_on_Lucene.java](https://github.com/kemaswill/Allen_AI_Science_Challenge_JunweiPan/blob/master/Get_Top_Documents_Based_on_Lucene.java), which is just a modification of the SearchFiles.java.
 
 ### Prediction
 
