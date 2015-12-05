@@ -94,7 +94,8 @@ def predict_train():
     #dir_data = 'data/wikipedia_content_based_on_ck_12_keyword_one_file_per_keyword'
     path_lucene_search_result = 'data/lucene_search_result_train_index_wiki_2.txt'
     dir_data = 'data/wikipedia_content_based_on_ck_12_keyword_PLUS_validation_question_PLUS_train_question_one_file_per_keyword'
-    path_output = 'data/predict/model_10037.txt'
+    path_output = 'data/predict/model_10044.txt'
+    n_top = 10
     file = open(path_output, 'w')
     file_wc = open(path_output[:-4] + '_wc.txt', 'w')
     print "Begin build_d_word_count_on_each_document"
@@ -106,7 +107,7 @@ def predict_train():
         question = lst[0]
         lst_path = lst[1].split(',')
         lst_choice = d_q_choice[question]
-        answer_p, d_choice_wc  = predict(question, lst_path, lst_choice, d_file_wc, d_q_choice, 3)
+        answer_p, d_choice_wc  = predict(question, lst_path, lst_choice, d_file_wc, d_q_choice, n_top)
         groundtruth = d_q_groundtruth[question]
         file_wc.write(question + '\t' + groundtruth + '\n')
         for flag_choice in lst_flag_choice:
@@ -126,7 +127,8 @@ def predict_validation():
     #dir_data = 'data/wikipedia_content_based_on_ck_12_keyword_one_file_per_keyword'
     path_lucene_search_result = 'data/lucene_search_result_validation_index_wiki_2.txt'
     dir_data = 'data/wikipedia_content_based_on_ck_12_keyword_PLUS_validation_question_PLUS_train_question_one_file_per_keyword'
-    file = open('data/predict/model_10034_validation.txt', 'w')
+    file = open('data/predict/model_10040_validation.txt', 'w')
+    n_top = 6
     file.write('id,correctAnswer\n')
     print "Begin build_d_word_count_on_each_document"
     d_file_wc = build_d_word_count_on_each_document(dir_data)
@@ -143,12 +145,12 @@ def predict_validation():
         set_id_predicted.add(id)
         lst_path = lst[1].split(',')
         lst_choice = d_q_choice[question]
-        answer_p = predict(question, lst_path, lst_choice, d_file_wc, d_q_choice, 4)
+        answer_p, d_choice_wc = predict(question, lst_path, lst_choice, d_file_wc, d_q_choice, n_top)
         file.write(d_q_id[question] + ',' + answer_p + '\n')
     print 'Missing', len(set_id_validation.difference(set_id_predicted))
     for id in set_id_validation.difference(set_id_predicted):
         file.write(id + ',' + 'C\n')
     file.close()
 
-#predict_validation()
-predict_train()
+predict_validation()
+#predict_train()

@@ -57,7 +57,8 @@ public class Get_Top_Documents_Based_on_Lucene {
       System.exit(0);
     }
 
-    String index = "index";
+    //String index = "index";
+    String index = "index_wiki_2";
     String field = "contents";
     String queries = null;
     int repeat = 0;
@@ -109,7 +110,9 @@ public class Get_Top_Documents_Based_on_Lucene {
     //String path_train = "data/training_set.tsv";
     //String path_output = "data/lucene_search_result_train.txt";
     String path_train = "data/validation_set.tsv";
-    String path_output = "data/lucene_search_result_validation.txt";
+    String path_output = "data/lucene_search_result_validation_index_wiki_2.txt";
+    //String path_train = "data/training_set.tsv";
+    //String path_output = "data/lucene_search_result_train_index_wiki_2.txt";
     Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path_output), "UTF-8"));
     try (BufferedReader br = new BufferedReader(new FileReader(path_train))) {
         String line;
