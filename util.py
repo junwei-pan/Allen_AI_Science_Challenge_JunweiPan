@@ -5,6 +5,9 @@ import string
 exclude = set(string.punctuation)
 stemmer = PorterStemmer()
 
+path_train = 'data/training_set.tsv'
+path_validation = 'data/validation_set.tsv'
+
 def load_d_word_count(path = 'data/ck-12-word-count.txt'):
     d = {}
     for line in open(path):
@@ -50,7 +53,6 @@ def get_sentence(dir):
     return lst_sentence
 
 def get_d_word_count_train_question():
-    path_train = 'data/training_set.tsv'
     d_word_count = {}
     for line in open(path_train):
         lst = line.strip('\n').split('\t')
@@ -61,7 +63,6 @@ def get_d_word_count_train_question():
     return d_word_count
 
 def get_d_word_count_train_choice():
-    path_train = 'data/training_set.tsv'
     d_word_count = {}
     for line in open(path_train):
         lst = line.strip('\n').split('\t')
@@ -73,7 +74,6 @@ def get_d_word_count_train_choice():
     return d_word_count
 
 def get_d_word_count_validation_question():
-    path_validation = 'data/validation_set.tsv'
     d_word_count = {}
     for line in open(path_validation):
         lst = line.strip('\n').split('\t')
@@ -84,7 +84,6 @@ def get_d_word_count_validation_question():
     return d_word_count
 
 def get_d_word_count_validation_choice():
-    path_validation = 'data/validation_set.tsv'
     d_word_count = {}
     for line in open(path_validation):
         lst = line.strip('\n').split('\t')
@@ -94,3 +93,18 @@ def get_d_word_count_validation_choice():
                 d_word_count.setdefault(word, 0)
                 d_word_count[word] += 1
     return d_word_count
+
+def get_questions(path):
+    lst_res = []
+    for index, line in enumerate(open(path)):
+        if index == 0:
+            continue
+        lst = line.strip('\n').split('\t')
+        lst_res.append(lst[1])
+    return lst_res
+
+def get_questions_train():
+    return get_questions(path_train)
+
+def get_questions_validation():
+    return get_questions(path_validation)
