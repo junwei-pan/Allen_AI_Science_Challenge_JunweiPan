@@ -42,6 +42,7 @@ def norm_word(word):
         word = word.lower().strip('?').strip('.').strip(',').strip('!')
     return word
     '''
+
 def get_sentence(dir):
     lst_sentence = []
     for path in os.listdir(dir):
@@ -108,3 +109,5 @@ def get_questions_train():
 
 def get_questions_validation():
     return get_questions(path_validation)
+
+

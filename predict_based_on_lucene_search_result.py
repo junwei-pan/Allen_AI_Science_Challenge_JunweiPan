@@ -57,7 +57,8 @@ def predict(question, lst_path, lst_choice, d_file_wc, d_q_choice, n_top):
     '''
     d_question_wc = {}
     # The d_choice_wc consists detailed information about the word count of each choice: the total word count as well as the word count of each word in each choice
-    d_choice_wc = {} 
+    d_choice_wc = {}
+    lst_score = []
     for path in lst_path[:n_top]:
         try:
             d_wc = d_file_wc[path]
@@ -85,19 +86,24 @@ def predict(question, lst_path, lst_choice, d_file_wc, d_q_choice, n_top):
         if n_count > MAX:
             MAX = n_count
             answer_p = flag_choice
+        lst_score.append(n_count)
 
-    return answer_p, d_choice_wc
+    return answer_p, d_choice_wc, lst_score
 
-def predict_train():
+def predict_train(n_top = 10):
     path_train = 'data/training_set.tsv'
     #path_lucene_search_result = 'data/lucene_search_result_train.txt'
     #dir_data = 'data/wikipedia_content_based_on_ck_12_keyword_one_file_per_keyword'
-    path_lucene_search_result = 'data/lucene_search_result_train_index_wiki_2.txt'
-    dir_data = 'data/wikipedia_content_based_on_ck_12_keyword_PLUS_validation_question_PLUS_train_question_one_file_per_keyword'
-    path_output = 'data/predict/model_10044.txt'
-    n_top = 10
+    #path_lucene_search_result = 'data/lucene_search_result_train_index_wiki_2.txt'
+    path_lucene_search_result = 'data/lucene_search_result_train_index_wiki_external_links_v1.txt'
+    #dir_data = 'data/wikipedia_content_based_on_ck_12_keyword_PLUS_validation_question_PLUS_train_question_one_file_per_keyword'
+    dir_data = 'data/wikipedia_content_external_links_train_validation_ck12'
+    model_num = '10050'
+    path_output = 'data/predict/model_' + model_num + '_top' + str(n_top) + '.txt'
     file = open(path_output, 'w')
     file_wc = open(path_output[:-4] + '_wc.txt', 'w')
+    file_fv = open(path_output[:-4] + '.fv', 'w')
+    file_fv.write('wc_lucene_' + model_num + '\n')
     print "Begin build_d_word_count_on_each_document"
     d_file_wc = build_d_word_count_on_each_document(dir_data)
     print "Begin build_d_question_choice_train"
@@ -107,7 +113,7 @@ def predict_train():
         question = lst[0]
         lst_path = lst[1].split(',')
         lst_choice = d_q_choice[question]
-        answer_p, d_choice_wc  = predict(question, lst_path, lst_choice, d_file_wc, d_q_choice, n_top)
+        answer_p, d_choice_wc, lst_score  = predict(question, lst_path, lst_choice, d_file_wc, d_q_choice, n_top)
         groundtruth = d_q_groundtruth[question]
         file_wc.write(question + '\t' + groundtruth + '\n')
         for flag_choice in lst_flag_choice:
@@ -118,16 +124,23 @@ def predict_train():
             s_word_wc = s_word_wc.strip()
             s_output = "%s\t%s\t%d\t%s\n" % (flag_choice, d['choice'], d['cnt_total'], s_word_wc)
             file_wc.write(s_output)
-        file.write(d_q_id[question] + ',' + answer_p + '\n')
+            file_fv.write(d['cnt_total'] + '\n')
+        file.write(d_q_id[question] + ',' + answer_p + ',' + ','.join(map(str, lst_score)) + '\n')
+    file_fv.close()
+    file_wc.close()
     file.close()
 
 def predict_validation():
     path_validation = 'data/validation_set.tsv'
     #path_lucene_search_result = 'data/lucene_search_result_validation.txt'
     #dir_data = 'data/wikipedia_content_based_on_ck_12_keyword_one_file_per_keyword'
-    path_lucene_search_result = 'data/lucene_search_result_validation_index_wiki_2.txt'
-    dir_data = 'data/wikipedia_content_based_on_ck_12_keyword_PLUS_validation_question_PLUS_train_question_one_file_per_keyword'
-    file = open('data/predict/model_10040_validation.txt', 'w')
+    #path_lucene_search_result = 'data/lucene_search_result_validation_index_wiki_2.txt'
+    #path_lucene_search_result = 'data/lucene_search_result_validation_index_wiki_2.txt'
+    path_lucene_search_result = 'data/lucene_search_result_train_index_wiki_external_links_v1.txt'
+    #dir_data = 'data/wikipedia_content_based_on_ck_12_keyword_PLUS_validation_question_PLUS_train_question_one_file_per_keyword'
+    dir_data = 'wikipedia_content_external_links_train_validation_ck12'
+    #file = open('data/predict/model_10040_validation.txt', 'w')
+    file = open('data/predict/model_10050_train.txt', 'w')
     n_top = 6
     file.write('id,correctAnswer\n')
     print "Begin build_d_word_count_on_each_document"
@@ -145,12 +158,14 @@ def predict_validation():
         set_id_predicted.add(id)
         lst_path = lst[1].split(',')
         lst_choice = d_q_choice[question]
-        answer_p, d_choice_wc = predict(question, lst_path, lst_choice, d_file_wc, d_q_choice, n_top)
+        answer_p, d_choice_wc, lst_score = predict(question, lst_path, lst_choice, d_file_wc, d_q_choice, n_top)
         file.write(d_q_id[question] + ',' + answer_p + '\n')
     print 'Missing', len(set_id_validation.difference(set_id_predicted))
     for id in set_id_validation.difference(set_id_predicted):
         file.write(id + ',' + 'C\n')
     file.close()
 
-predict_validation()
-#predict_train()
+#predict_validation()
+predict_train(10)
+#for i in range(11, 20):
+#    predict_train(i)

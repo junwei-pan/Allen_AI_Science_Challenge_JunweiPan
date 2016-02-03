@@ -13,7 +13,7 @@ def cal_metrics(d_id_answer, d_id_answer_p):
 
 d_id_answer = {}
 d_id_answer_p = {}
-path_train = 'data/training_set.tsv'
+path_train = '/home/jwpan/Labs/Kaggle/Allen_AI_Science_Challenge_JunweiPan/data/training_set.tsv'
 for index, line in enumerate(open(path_train)):
     lst = line.strip('\n').split('\t')
     d_id_answer[lst[0]] = lst[2]
